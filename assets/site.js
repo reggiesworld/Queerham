@@ -44,7 +44,7 @@
     header.innerHTML =
       '<div class="wrap top"><span>Birmingham, Alabama</span><span class="hide-sm">Independent / Reader supported / No ads</span><span>' + today + "</span></div>" +
       '<div class="wrap mast"><a class="logo" href="' + root + 'index.html" data-cursor="Home">queerham</a>' +
-      '<div class="tagline">The South, read.</div></div>';
+      '<div class="tagline">News for queer Southerners, checked twice.</div></div>';
     header.insertAdjacentHTML("afterend",
       '<div class="dateline-wrap" id="dateline"><div class="wrap dateline">' +
       '<a class="mini-logo" href="' + root + 'index.html">queerham</a>' +
@@ -127,7 +127,8 @@
       "</div></section>" +
       '<div class="site-footer"><div class="wrap"><div class="cols">' +
       "<div><p style=\"font:italic 400 1.3rem var(--serif);color:var(--ink);max-width:440px\">News, advocacy and plain-language guides for queer people across the South.</p>" +
-      '<p class="updated">Based in Birmingham, Alabama. Nothing here is legal or medical advice. Headlines in The Latest link to outside outlets that queerham does not control.</p></div>' +
+      '<p class="updated">Based in Birmingham, Alabama. Nothing here is legal or medical advice. Headlines in The Latest link to outside outlets that queerham does not control.</p>' +
+      '<p class="font-credit">Logo set in <a href="https://www.typewithpride.com/" target="_blank" rel="noopener">Gilbert</a>, the typeface honoring Gilbert Baker, licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</p></div>' +
       '<div><strong>Read</strong><ul><li><a href="' + root + 'live.html">The Latest</a></li><li><a href="' + root + 'joy.html">Queer Joy</a></li><li><a href="' + root + 'world.html">Wider world</a></li><li><a href="' + root + 'polls.html">Polls</a></li><li><a href="' + root + 'news.html">Stories</a></li>' +
       '<li><a href="' + root + 'states.html">State tracker</a></li><li><a href="' + root + 'federal.html">Federal tracker</a></li><li><a href="' + root + 'vote.html">Vote 2026</a></li></ul></div>' +
       '<div><strong>About</strong><ul><li><a href="' + root + 'support.html">Support queerham</a></li><li><a href="' + root + 'about.html">Who runs this</a></li><li><a href="' + root + 'about.html#standards">Editorial standards</a></li>' +
