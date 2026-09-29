@@ -72,7 +72,7 @@ Until `paymentLink` is filled in, the Support page shows "Memberships open soon"
 Stripe charges 2.9% plus 30 cents per payment, so each $3 membership nets about $2.61.
 
 ## Credits
-- Logo typeface: Gilbert, honoring Gilbert Baker, licensed CC BY-SA 4.0 (credited in the site footer, which the license requires).
+- Logo typeface: Gilbert, honoring Gilbert Baker, licensed CC BY-SA 4.0 (credited at the bottom of the About page, which the license requires).
 
 
 ## Add a post

@@ -30,7 +30,7 @@
   var MEDIA = /(fox|cnn|msnbc|\bnbc\b|abc news|\babc\b|\bcbs\b|new york times|\bnyt\b|washington post|wall street journal|\bwsj\b|usa today|reuters|associated press|ap-norc|\bnpr\b|\bpbs\b|politico|the hill|bloomberg|cnbc|newsweek|yahoo|the economist|daily mail|newsnation|nexstar)/i;
   var RATERS = [["Cook", /cook/i], ["Sabato", /sabato/i], ["Inside Elections", /inside elections/i]];
   var ELECTION = new Date("2026-11-03T12:00:00-06:00");
-  var CACHE = "qh-polls-v2", TTL = 20 * 60 * 1000;
+  var CACHE = "qh-polls-v3", TTL = 20 * 60 * 1000;
   var MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -97,8 +97,8 @@
     var sq = hay.replace(/[^a-z0-9]/g, "");
     return ids.some(function (t) { return sq.indexOf(t) > -1; });
   }
-  // The link must belong to this pollster. A link naming a different pollster from the same race is rejected even if
-  // the citation's title looks right. Links to neutral hosts (PDF hosts, cloud drives) are trusted only if the title names the pollster.
+  // Drop a poll only when its source clearly belongs to a different pollster in the same race (the error seen in live tables).
+  // Links that name this pollster are accepted, and so are neutral hosts (PDF hosts, local papers, social posts).
   function pickSource(pollster, links, allNames) {
     if (!links || !links.length) return null;
     var own = idents(pollster);
@@ -108,7 +108,8 @@
       var url = (links[i].url || "").toLowerCase(), text = (links[i].text || "").toLowerCase();
       if (has(url, own)) return links[i].url;
       if (has(url, others)) continue;
-      if (has(text, own)) return links[i].url;
+      if (has(text, others) && !has(text, own)) continue;
+      return links[i].url;
     }
     return null;
   }
@@ -315,7 +316,6 @@
         '<article class="card race" data-state="' + esc(r.state) + '"><div class="kicker">' + esc(r.state) + " / " + esc(r.office) + '</div><div class="skeleton" style="height:120px;border:0;border-radius:12px"></div></article>';
     }).join("");
     wireTrends(target);
-    if (window.QHReveal) window.QHReveal(target);
   }
 
   function status(txt) { document.querySelectorAll("[data-polls-status]").forEach(function (el) { el.textContent = txt; }); }

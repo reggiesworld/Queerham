@@ -422,3 +422,4 @@ details ul { padding-left: 1.2em; }
 }
 @media print { .dateline-wrap, .ticker, .help, .site-footer, .filters, .cursor-dot, .cursor-ring, .support-band, .support-note { display: none !important; } body { background: #fff; color: #000; } }
 .article p.meta { font-size: 11px; }
+.card p.meta, .race p.meta { font-size: 11px; line-height: 1.5; }
