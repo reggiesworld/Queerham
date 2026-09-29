@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#131210" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<title>Support queerham | queerham</title>
+<meta name="description" content="Keep queerham free for everyone. Become a member for $3 a month.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="support" data-root="">
+<a class="skip" href="#main">Skip to content</a>
+<header id="site-header"></header>
+<div id="ticker"></div>
+
+<main id="main">
+  <section class="hero">
+    <div class="hero-orb" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="kicker">Reader supported</div>
+      <h1>Support <em>queerham</em></h1>
+      <p class="lede">Everything here is free, and it stays free: The Latest, the trackers, the guides, the polls. Members are the reason it can.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap support-grid">
+      <div class="price-card">
+        <div class="kicker">Membership</div>
+        <div class="price"><span data-support="price">$3</span><small> / <span data-support="period">month</span></small></div>
+        <ul class="perks">
+          <li><span><strong>Keep it free for everyone,</strong> including the people who can't pay and need it most.</span></li>
+          <li><span><strong>A monthly members' note</strong> on what's coming next and where the money went.</span></li>
+          <li><span><strong>A say in what we cover,</strong> with member suggestions read first.</span></li>
+          <li><span><strong>Your name on the supporters wall,</strong> only if you want it there.</span></li>
+        </ul>
+        <a class="btn big" data-support="join" href="#" target="_blank" rel="noopener">Become a member <span class="arr">&rarr;</span></a>
+        <p class="meta" style="margin:14px 0 0">Secure checkout by Stripe. Cancel anytime.</p>
+        <p class="meta" data-support="manage-wrap" style="margin:6px 0 0;display:none">Already a member? <a data-support="manage" href="#" target="_blank" rel="noopener">Manage or cancel your membership</a>.</p>
+      </div>
+
+      <div>
+        <h2 style="margin-top:0">Where your $3 goes</h2>
+        <div class="where-list">
+          <article class="card"><h3>Checking the facts</h3><p>Reading the bills, the rulings and the fine print, so every story links to its source.</p></article>
+          <article class="card"><h3>Keeping it running</h3><p>Hosting, the domain and the tools behind The Latest and the polls.</p></article>
+          <article class="card"><h3>No ads, ever</h3><p>No trackers selling your reading habits, and no outlets paying for placement.</p></article>
+          <article class="card"><h3>New guides</h3><p>More states, more how-tos and more Queer Joy, based on what members ask for.</p></article>
+        </div>
+        <p style="margin-top:24px"><strong>Can't swing $3 right now?</strong> Share a story with one person who needs it. That helps just as much.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap narrow">
+      <h2>Questions</h2>
+      <details><summary>Will anything go behind a paywall?</summary><p>No. Every page stays free for everyone. Membership pays for the site; it doesn't unlock it.</p></details>
+      <details><summary>How do I cancel?</summary><p>Anytime, in two clicks, from the link Stripe emails you with your receipt<span data-support="manage-faq"></span>. You won't be charged again after you cancel.</p></details>
+      <details><summary>Is my payment private?</summary><p>Stripe handles the payment. queerham never sees or stores your card number. Your bank statement will show <strong data-support="descriptor">QH MEDIA</strong>, not the word "queer," so it stays discreet if you aren't out to everyone who sees your statements.</p></details>
+      <details><summary>Is it tax-deductible?</summary><p>No. queerham is not a registered nonprofit, so memberships are not tax-deductible.</p></details>
+      <details><summary>Can I give once instead?</summary><p>Not yet. For now it's monthly only. Message us on <a href="https://www.instagram.com/queer.ham/" target="_blank" rel="noopener">Instagram</a> if you'd like to give a one-time gift.</p></details>
+    </div>
+  </section>
+
+</main>
+
+<footer id="site-footer"></footer>
+<script src="assets/posts.js"></script>
+<script src="assets/support.js"></script>
+<script>
+  (function () {
+    var c = window.QH_SUPPORT || {};
+    document.querySelectorAll('[data-support="price"]').forEach(function (e) { e.textContent = c.price || "$3"; });
+    document.querySelectorAll('[data-support="period"]').forEach(function (e) { e.textContent = c.period || "month"; });
+    document.querySelectorAll('[data-support="descriptor"]').forEach(function (e) { e.textContent = c.descriptor || "QH MEDIA"; });
+    var join = document.querySelector('[data-support="join"]');
+    if (c.paymentLink) join.href = c.paymentLink;
+    else { join.setAttribute("aria-disabled", "true"); join.removeAttribute("href"); join.innerHTML = "Memberships open soon"; }
+    if (c.manageLink) {
+      document.querySelector('[data-support="manage"]').href = c.manageLink;
+      document.querySelector('[data-support="manage-wrap"]').style.display = "";
+      document.querySelector('[data-support="manage-faq"]').innerHTML = ', or from <a href="' + c.manageLink + '" target="_blank" rel="noopener">this page</a>';
+    }
+  })();
+</script>
+<script src="assets/feed.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

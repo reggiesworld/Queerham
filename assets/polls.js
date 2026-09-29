@@ -30,7 +30,7 @@
   var MEDIA = /(fox|cnn|msnbc|\bnbc\b|abc news|\babc\b|\bcbs\b|new york times|\bnyt\b|washington post|wall street journal|\bwsj\b|usa today|reuters|associated press|ap-norc|\bnpr\b|\bpbs\b|politico|the hill|bloomberg|cnbc|newsweek|yahoo|the economist|daily mail|newsnation|nexstar)/i;
   var RATERS = [["Cook", /cook/i], ["Sabato", /sabato/i], ["Inside Elections", /inside elections/i]];
   var ELECTION = new Date("2026-11-03T12:00:00-06:00");
-  var CACHE = "qh-polls-v1", TTL = 20 * 60 * 1000;
+  var CACHE = "qh-polls-v2", TTL = 20 * 60 * 1000;
   var MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -51,24 +51,66 @@
     return new Date(+year, mon, days ? +days[days.length - 1] : 15, 12);
   }
 
-  // Expand a table into a full grid, resolving rowspan and colspan.
-  function grid(table) {
-    var rows = [], spans = {};
+  // Expand a table into a full grid, resolving rowspan and colspan. links[r] holds the citation links of the row's pollster cell.
+  function grid(table, doc) {
+    var rows = [], spans = {}, lspans = {};
+    rows.links = [];
     Array.prototype.forEach.call(table.querySelectorAll("tr"), function (tr, r) {
-      var row = [], c = 0;
+      var row = [], c = 0, rowLinks = null;
       Array.prototype.forEach.call(tr.children, function (cell) {
-        while (spans[r + "," + c]) { row[c] = spans[r + "," + c]; c++; }
+        while (spans[r + "," + c] !== undefined) { if (c === 0) rowLinks = lspans[r + ",0"]; row[c] = spans[r + "," + c]; c++; }
         var rs = +cell.getAttribute("rowspan") || 1, cs = +cell.getAttribute("colspan") || 1, txt = clean(cell.textContent);
+        var cellLinks = null;
+        if (c === 0 && doc) {
+          cellLinks = Array.prototype.map.call(cell.querySelectorAll("sup.reference a"), function (a) {
+            var li = doc.getElementById(decodeURIComponent((a.getAttribute("href") || "").replace(/^#/, "")));
+            var ext = li && li.querySelector("a.external");
+            return ext ? { url: ext.getAttribute("href"), text: li.textContent } : null;
+          }).filter(Boolean);
+          rowLinks = cellLinks;
+        }
         for (var i = 0; i < cs; i++) {
           row[c + i] = txt;
-          for (var k = 1; k < rs; k++) spans[(r + k) + "," + (c + i)] = txt;
+          for (var k = 1; k < rs; k++) { spans[(r + k) + "," + (c + i)] = txt; if (c + i === 0) lspans[(r + k) + ",0"] = cellLinks; }
         }
         c += cs;
       });
-      while (spans[r + "," + c]) { row[c] = spans[r + "," + c]; c++; }
+      while (spans[r + "," + c] !== undefined) { if (c === 0) rowLinks = lspans[r + ",0"]; row[c] = spans[r + "," + c]; c++; }
       rows.push(row);
+      rows.links.push(rowLinks || []);
     });
     return rows;
+  }
+
+  // Words that identify a pollster (skips generic words shared by many firms), plus the squashed name, e.g. "bigdatapoll".
+  var GENERIC = /^(the|and|for|research|group|polling|poll|polls|insights|strategies|strategy|associates|partners|solutions|public|policy|university|college|institute|center|opinion|survey|surveys|data|analytics|consulting|communications|market|news|inc|llc|international)$/;
+  function idents(name) {
+    var out = [];
+    name.toLowerCase().replace(/\([^)]*\)/g, " ").split(/\/|&| and /).forEach(function (part) {
+      var squashed = part.replace(/[^a-z0-9]/g, "");
+      if (squashed.length >= 5) out.push(squashed);
+      (part.match(/[a-z][a-z0-9]{3,}/g) || []).forEach(function (w) { if (!GENERIC.test(w)) out.push(w); });
+    });
+    return out.filter(function (x, i, a) { return a.indexOf(x) === i; });
+  }
+  function has(hay, ids) {
+    var sq = hay.replace(/[^a-z0-9]/g, "");
+    return ids.some(function (t) { return sq.indexOf(t) > -1; });
+  }
+  // The link must belong to this pollster. A link naming a different pollster from the same race is rejected even if
+  // the citation's title looks right. Links to neutral hosts (PDF hosts, cloud drives) are trusted only if the title names the pollster.
+  function pickSource(pollster, links, allNames) {
+    if (!links || !links.length) return null;
+    var own = idents(pollster);
+    var others = [];
+    allNames.forEach(function (n) { if (n !== pollster) idents(n).forEach(function (t) { if (own.indexOf(t) < 0 && others.indexOf(t) < 0) others.push(t); }); });
+    for (var i = 0; i < links.length; i++) {
+      var url = (links[i].url || "").toLowerCase(), text = (links[i].text || "").toLowerCase();
+      if (has(url, own)) return links[i].url;
+      if (has(url, others)) continue;
+      if (has(text, own)) return links[i].url;
+    }
+    return null;
   }
 
   function parseRace(race, html) {
@@ -85,23 +127,30 @@
       return !!(table && pred);
     });
     var ratings = [];
-    if (pred) grid(pred).forEach(function (row) {
+    if (pred) grid(pred, null).forEach(function (row) {
       RATERS.forEach(function (rt) {
         if (row[0] && rt[1].test(row[0]) && row[1] && !ratings.some(function (x) { return x[0] === rt[0]; })) ratings.push([rt[0], row[1]]);
       });
     });
-    var polls = [];
+    var polls = [], dropped = [];
     if (table) {
-      var g = grid(table), head = g[0].map(function (h) { return h.toLowerCase(); });
+      var g = grid(table, doc), head = g[0].map(function (h) { return h.toLowerCase(); });
       var col = race.c.map(function (c) { return head.findIndex(function (h) { return h.indexOf(c[0].toLowerCase()) > -1; }); });
       var und = head.findIndex(function (h) { return /undecided/.test(h); });
-      g.slice(1).forEach(function (row) {
+      var names = g.slice(1).map(function (row) { return row[0] || ""; }).filter(function (n, i, a) { return n && a.indexOf(n) === i; });
+      g.slice(1).forEach(function (row, idx) {
         var pollster = row[0] || "";
         if (!pollster || MEDIA.test(pollster) || /average|aggregat/i.test(pollster)) return;
         var d = endDate(row[1] || "");
         var vals = col.map(function (i) { var v = parseFloat((row[i] || "").replace(/[^\d.]/g, "")); return i > -1 && !isNaN(v) ? v : null; });
         if (!d || vals[0] === null || vals[1] === null) return;
-        polls.push({ pollster: pollster, dates: row[1], sample: row[2] || "", moe: row[3] || "", end: d.toISOString(), v: vals, und: und > -1 ? parseFloat(row[und]) || null : null });
+        // Sanity checks: real percentages, a total that is possible, and a source that belongs to this pollster.
+        var sum = vals.reduce(function (a, b) { return a + (b || 0); }, 0);
+        if (vals.some(function (v) { return v !== null && (v < 0 || v > 100); }) || sum > 101) { dropped.push(pollster + ": impossible numbers"); return; }
+        var src = pickSource(pollster, g.links[idx + 1], names);
+        if (!src) { dropped.push(pollster + ": no matching source"); return; }
+        if (MEDIA.test(src)) return;
+        polls.push({ pollster: pollster, dates: row[1], sample: row[2] || "", moe: row[3] || "", end: d.toISOString(), v: vals, und: und > -1 ? parseFloat(row[und]) || null : null, src: src });
       });
     }
     // One entry per poll: when a pollster reports likely-voter, registered-voter and all-adult versions, keep likely voters.
@@ -113,7 +162,7 @@
     });
     polls = Object.keys(byKey).map(function (k) { return byKey[k]; });
     polls.sort(function (a, b) { return new Date(b.end) - new Date(a.end); });
-    return { polls: polls, ratings: ratings };
+    return { polls: polls, ratings: ratings, dropped: dropped };
   }
 
   function average(polls, n) {
@@ -129,14 +178,31 @@
     return { vals: out, count: recent.length };
   }
 
+  // Use the newest version of the page that has stood for at least 3 hours, so fresh vandalism never reaches the site.
+  var SETTLE_HOURS = 3;
   function fetchRace(race) {
-    return fetch("https://en.wikipedia.org/w/api.php?action=parse&page=" + race.page + "&prop=text&format=json&origin=*&formatversion=2&redirects=1")
+    var api = "https://en.wikipedia.org/w/api.php?format=json&origin=*&formatversion=2&";
+    var cutoff = new Date(Date.now() - SETTLE_HOURS * 3600e3).toISOString();
+    return fetch(api + "action=query&prop=revisions&rvprop=ids|timestamp&rvlimit=1&rvdir=older&rvstart=" + cutoff + "&redirects=1&titles=" + race.page)
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (j) { if (j.error) throw new Error(j.error.code); return parseRace(race, j.parse.text); });
+      .then(function (q) {
+        var pg = q.query && q.query.pages && q.query.pages[0];
+        var rev = pg && pg.revisions && pg.revisions[0];
+        if (!rev) throw new Error("no settled revision");
+        return fetch(api + "action=parse&prop=text&oldid=" + rev.revid)
+          .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+          .then(function (j) {
+            if (j.error) throw new Error(j.error.code);
+            var d = parseRace(race, j.parse.text);
+            d.asOf = rev.timestamp; d.revid = rev.revid;
+            return d;
+          });
+      });
   }
 
   /* Rendering */
   function color(p) { return p === "R" ? "var(--rep)" : p === "D" ? "var(--dem)" : "var(--ind)"; }
+  function host(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return "source"; } }
   function fmtDate(iso) { return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" }); }
 
   function trend(race, polls) {
@@ -177,7 +243,9 @@
     var ratings = data.ratings.map(function (r) { return '<span class="tag">' + esc(r[0]) + ": " + esc(r[1]) + "</span>"; }).join("");
     var body;
     if (!avg) {
-      body = '<p class="meta" style="margin:8px 0 0">No public polls released for this race yet.</p>';
+      body = data.dropped && data.dropped.length ?
+        '<p style="margin:8px 0 0">Polls exist for this race, but none passed our source checks yet. See the compiled list below to check them yourself.</p>' :
+        '<p style="margin:8px 0 0">No public polls released for this race yet.</p>';
     } else {
       var order = race.c.map(function (c, i) { return i; }).filter(function (i) { return avg.vals[i] !== null; }).sort(function (a, b) { return avg.vals[b] - avg.vals[a]; });
       var lead = order[0], second = order[1];
@@ -193,7 +261,8 @@
       }).join("");
       var latest = polls[0];
       var rows = polls.map(function (p) {
-        return "<tr><td>" + esc(p.pollster) + "</td><td>" + esc(p.dates) + "</td><td>" + esc(p.sample) + "</td>" + race.c.map(function (c, i) { return "<td>" + (p.v[i] !== null ? p.v[i] + "%" : "") + "</td>"; }).join("") + "</tr>";
+        return "<tr><td>" + esc(p.pollster) + "</td><td>" + esc(p.dates) + "</td><td>" + esc(p.sample) + "</td>" + race.c.map(function (c, i) { return "<td>" + (p.v[i] !== null ? p.v[i] + "%" : "") + "</td>"; }).join("") +
+          '<td><a href="' + esc(p.src) + '" target="_blank" rel="noopener">' + esc(host(p.src)) + "</a></td></tr>";
       }).join("");
       body =
         '<div class="lead-line"><span class="lead-nm">' + esc(race.c[lead][0]) + '</span> <span class="lead-mg" style="color:' + color(race.c[lead][2]) + '">' + (margin > 0 ? "+" + margin : "Tied") + "</span></div>" +
@@ -201,14 +270,15 @@
         '<div class="split" role="img" aria-label="' + esc(race.c.map(function (c, i) { return c[1] + " " + (avg.vals[i] || 0) + " percent"; }).join(", ")) + '">' + split + "</div>" +
         '<div class="cands">' + cands + "</div>" +
         (big ? trend(race, polls) : "") +
-        '<p class="meta latest">Latest: ' + esc(latest.pollster) + " / " + esc(latest.dates) + (latest.sample ? " / " + esc(latest.sample) : "") + "</p>" +
+        '<p class="meta latest">Latest: ' + esc(latest.pollster) + " / " + esc(latest.dates) + (latest.sample ? " / " + esc(latest.sample) : "") +
+        ' / <a href="' + esc(latest.src) + '" target="_blank" rel="noopener">read the release</a></p>' +
         '<details class="poll-table"><summary>All ' + polls.length + " poll" + (polls.length === 1 ? "" : "s") + '</summary><div class="table-scroll"><table><thead><tr><th>Pollster</th><th>Dates</th><th>Sample</th>' +
-        race.c.map(function (c) { return "<th>" + esc(c[0]) + "</th>"; }).join("") + "</tr></thead><tbody>" + rows + "</tbody></table></div></details>";
+        race.c.map(function (c) { return "<th>" + esc(c[0]) + "</th>"; }).join("") + "<th>Original release</th></tr></thead><tbody>" + rows + "</tbody></table></div></details>";
     }
     return '<article class="card race' + (big ? " race-big" : "") + '" data-state="' + esc(race.state) + '" data-race="' + race.id + '">' +
       '<div class="kicker">' + esc(race.state) + " / " + esc(race.office) + "</div>" +
       (ratings ? '<div class="ratings">' + ratings + "</div>" : "") + body +
-      '<a class="src-link" href="https://en.wikipedia.org/wiki/' + race.page + '#General_election" target="_blank" rel="noopener">Source table &rarr;</a></article>';
+      '<a class="src-link" href="https://en.wikipedia.org/w/index.php?oldid=' + (data.revid || "") + '#General_election" target="_blank" rel="noopener">Compiled list' + (data.asOf ? ", as of " + new Date(data.asOf).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "") + " &rarr;</a></article>";
   }
 
   function wireTrends(scope) {
@@ -248,7 +318,7 @@
     if (window.QHReveal) window.QHReveal(target);
   }
 
-  function status(txt) { document.querySelectorAll("[data-polls-status]").forEach(function (el) { el.innerHTML = '<span class="dot"></span>' + txt; }); }
+  function status(txt) { document.querySelectorAll("[data-polls-status]").forEach(function (el) { el.textContent = txt; }); }
 
   function init() {
     var targets = Array.prototype.slice.call(document.querySelectorAll("[data-polls]"));
@@ -260,7 +330,7 @@
     });
     function paint() { targets.forEach(function (t) { render(t, t.getAttribute("data-polls").split(","), t.hasAttribute("data-big")); }); }
     var cached = readCache();
-    if (cached) { STORE = cached.data; paint(); status("Live / checked " + Math.max(1, Math.round((Date.now() - cached.t) / 60000)) + "m ago"); return; }
+    if (cached) { STORE = cached.data; paint(); status("Checked " + Math.max(1, Math.round((Date.now() - cached.t) / 60000)) + "m ago"); return; }
     paint(); status("Loading the latest polls");
     var list = Object.keys(need).map(function (k) { return need[k]; });
     var done = 0;
@@ -271,7 +341,7 @@
     })).then(function () {
       paint(); writeCache();
       var ok = list.filter(function (r) { return STORE[r.id]; }).length;
-      status(ok ? "Live / checked just now" : "Polls could not load right now");
+      status(ok ? "Checked just now" : "Polls could not load right now");
     });
     // State filter on the polls page
     var chips = document.getElementById("poll-states");
@@ -287,6 +357,6 @@
     }
   }
 
-  window.QHPolls = { races: RACES, init: init, parseRace: parseRace, endDate: endDate };
+  window.QHPolls = { races: RACES, init: init, parseRace: parseRace, endDate: endDate, fetchRace: fetchRace, average: average };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();

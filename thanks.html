@@ -5,14 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#131210" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
-<title>The Latest | queerham</title>
-<meta name="description" content="An automatically updated feed of news that affects queer people in the South and nationally, filterable by state and topic.">
+<title>Thank you | queerham</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Thank you for supporting queerham.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 </head>
-<body data-page="live" data-root="">
+<body data-page="thanks" data-root="">
 <a class="skip" href="#main">Skip to content</a>
 <header id="site-header"></header>
 <div id="ticker"></div>
@@ -20,16 +21,15 @@
 <main id="main">
   <section class="hero">
     <div class="hero-orb" aria-hidden="true"></div>
-    <div class="wrap">
-      <div class="kicker" data-feed-status><span class="dot"></span>Loading</div>
-      <h1>The Latest</h1>
-      <p class="lede">Every headline we can find about queer life, rights and safety in the South and in Washington, newest first. It refreshes on its own every few minutes.</p>
-    </div>
-  </section>
-  <section class="block">
-    <div class="wrap feed-layout">
-      <aside class="feed-side" id="feed-side" aria-label="Filter the feed"></aside>
-      <div class="feed-list" id="feed" data-feed="queer" data-full data-side="feed-side" aria-live="polite"></div>
+    <div class="wrap narrow">
+      <div class="kicker">Welcome in</div>
+      <h1>Thank <em>you.</em></h1>
+      <p class="lede">You just helped keep queerham free for someone who needs it. Stripe is emailing your receipt now, with a link to manage your membership anytime.</p>
+      <div class="btn-row">
+        <a class="btn" href="live.html">Back to the live feed <span class="arr">&rarr;</span></a>
+        <a class="btn ghost" href="https://www.instagram.com/queer.ham/" target="_blank" rel="noopener">Say hi on Instagram</a>
+      </div>
+      <p class="meta" style="margin-top:24px">Want your name on the supporters wall, or have a story we should cover? Send us a message on Instagram.</p>
     </div>
   </section>
 
@@ -37,6 +37,7 @@
 
 <footer id="site-footer"></footer>
 <script src="assets/posts.js"></script>
+<script src="assets/support.js"></script>
 <script src="assets/feed.js"></script>
 <script src="assets/site.js"></script>
 </body>

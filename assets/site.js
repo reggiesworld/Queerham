@@ -30,34 +30,42 @@
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   }
 
-  /* Header */
+  /* Masthead and dateline */
   var links = [
-    ["live.html", "Live Feed", "live"], ["joy.html", "Queer Joy", "joy"], ["world.html", "Wider World", "world"], ["polls.html", "Polls", "polls"], ["news.html", "Stories", "news"],
+    ["live.html", "Latest", "live"], ["joy.html", "Queer Joy", "joy"], ["world.html", "Wider World", "world"], ["polls.html", "Polls", "polls"], ["news.html", "Stories", "news"],
     ["states.html", "States", "states"], ["federal.html", "Federal", "federal"],
     ["protect.html", "Protect", "protect"], ["vote.html", "Vote", "vote"], ["about.html", "About", "about"]
   ];
   var header = document.getElementById("site-header");
+  var tb = null, nt = null;
   if (header) {
-    header.className = "site-header";
+    var today = new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+    header.className = "site-header" + (page === "home" ? "" : " compact");
     header.innerHTML =
-      '<div class="wrap bar">' +
-      '<a class="logo" href="' + root + 'index.html" data-cursor="Home">queer<span>ham</span></a>' +
+      '<div class="wrap top"><span>Birmingham, Alabama</span><span class="hide-sm">Independent / Reader supported / No ads</span><span>' + today + "</span></div>" +
+      '<div class="wrap mast"><a class="logo" href="' + root + 'index.html" data-cursor="Home">queerham</a>' +
+      '<div class="tagline">News for queer Southerners, checked twice.</div></div>';
+    header.insertAdjacentHTML("afterend",
+      '<div class="dateline-wrap" id="dateline"><div class="wrap dateline">' +
+      '<a class="mini-logo" href="' + root + 'index.html">queerham</a>' +
       '<nav class="nav" id="nav" aria-label="Main">' + links.map(function (l) {
         return '<a href="' + root + l[0] + '"' + (page === l[2] ? ' aria-current="page"' : "") + ">" + l[1] + "</a>";
-      }).join("") + "</nav>" +
-      '<div class="tools">' +
-      '<a class="live-pill magnetic" href="' + root + 'live.html"><span class="dot"></span><span class="txt">Live</span></a>' +
+      }).join("") + '<button class="nav-theme" type="button" id="nav-theme"></button></nav>' +
+      '<div class="tools"><span class="upd" data-feed-updated></span>' +
       '<button class="theme-btn" id="theme-btn" type="button" aria-label="Toggle dark mode"></button>' +
+      '<a class="support-pill" href="' + root + 'support.html">Support $3/mo</a>' +
       '<button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>' +
-      "</div></div>";
-    var tb = document.getElementById("theme-btn");
-    var setLabel = function () { tb.textContent = isDark() ? "Light" : "Dark"; };
+      "</div></div></div>");
+    tb = document.getElementById("theme-btn"); nt = document.getElementById("nav-theme");
+    var setLabel = function () { tb.textContent = isDark() ? "Light" : "Dark"; nt.textContent = "Switch to " + (isDark() ? "light" : "dark") + " mode"; };
     setLabel();
-    tb.addEventListener("click", function () {
+    var toggle = function () {
       var next = isDark() ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", next);
       store("qh-theme", next); setLabel();
-    });
+    };
+    tb.addEventListener("click", toggle);
+    nt.addEventListener("click", toggle);
     var mb = document.getElementById("menu-btn"), nav = document.getElementById("nav");
     mb.addEventListener("click", function () {
       var open = nav.classList.toggle("open");
@@ -65,6 +73,11 @@
       mb.textContent = open ? "Close" : "Menu";
       document.documentElement.style.overflow = open ? "hidden" : "";
     });
+    // Show the small logo in the dateline once the big masthead scrolls away
+    var dl = document.getElementById("dateline");
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es) { dl.classList.toggle("stuck", !es[0].isIntersecting); }).observe(header.querySelector(".mast"));
+    }
   }
 
   /* Progress bar, header hide on scroll */
@@ -73,9 +86,6 @@
   function onScroll() {
     var y = window.scrollY, h = document.documentElement.scrollHeight - innerHeight;
     pb.style.transform = "scaleX(" + (h > 0 ? y / h : 0) + ")";
-    if (header && !(document.getElementById("nav") || {}).classList.contains("open")) {
-      header.classList.toggle("hide", y > lastY && y > 240);
-    }
     velocity = y - lastY; lastY = y; ticking = false;
   }
   window.addEventListener("scroll", function () { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } }, { passive: true });
@@ -84,7 +94,7 @@
   var ticker = document.getElementById("ticker");
   if (ticker) {
     ticker.className = "ticker";
-    ticker.innerHTML = '<div class="ticker-inner"><a class="ticker-label" href="' + root + 'live.html"><span class="dot"></span>Live</a><div class="marquee" aria-label="Latest headlines"><div class="marquee-track" id="ticker-track"></div></div></div>';
+    ticker.innerHTML = '<div class="ticker-inner"><a class="ticker-label" href="' + root + 'live.html">Latest</a><div class="marquee" aria-label="Latest headlines"><div class="marquee-track" id="ticker-track"></div></div></div>';
   }
   function fillTicker(items) {
     var track = document.getElementById("ticker-track");
@@ -102,7 +112,12 @@
   /* Footer */
   var footer = document.getElementById("site-footer");
   if (footer) {
-    footer.innerHTML =
+    var band = page === "support" || page === "thanks" ? "" :
+      '<section class="support-band"><div class="wrap"><div><div class="kicker">Reader supported</div>' +
+      '<h2>Keep queerham <em>free</em> for everyone.</h2>' +
+      '<p>No ads, no paywall, no national outlets. Just independent news for queer Southerners. $3 a month keeps it that way.</p></div>' +
+      '<a class="btn" href="' + root + 'support.html">Support for $3/month <span class="arr">&rarr;</span></a></div></section>';
+    footer.innerHTML = band +
       '<section class="help"><div class="wrap">' +
       "<h3>In crisis right now?</h3>" +
       '<span>Call or text <a href="tel:988">988</a></span>' +
@@ -111,14 +126,14 @@
       '<span>LGBT National Hotline <a href="tel:18888434564">888-843-4564</a></span>' +
       "</div></section>" +
       '<div class="site-footer"><div class="wrap"><div class="cols">' +
-      "<div><p style=\"font:600 1.3rem var(--display);letter-spacing:-.02em;color:var(--ink);max-width:420px\">News, advocacy and plain-language guides for queer people across the South.</p>" +
-      '<p class="updated">Based in Birmingham, Alabama. Nothing here is legal or medical advice. Live headlines link to outside outlets that queerham does not control.</p>' +
+      "<div><p style=\"font:italic 400 1.3rem var(--serif);color:var(--ink);max-width:440px\">News, advocacy and plain-language guides for queer people across the South.</p>" +
+      '<p class="updated">Based in Birmingham, Alabama. Nothing here is legal or medical advice. Headlines in The Latest link to outside outlets that queerham does not control.</p>' +
       '<p class="font-credit">Logo set in <a href="https://www.typewithpride.com/" target="_blank" rel="noopener">Gilbert</a>, the typeface honoring Gilbert Baker, licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</p></div>' +
-      '<div><strong>Read</strong><ul><li><a href="' + root + 'live.html">Live feed</a></li><li><a href="' + root + 'joy.html">Queer Joy</a></li><li><a href="' + root + 'world.html">Wider world</a></li><li><a href="' + root + 'polls.html">Polls</a></li><li><a href="' + root + 'news.html">Stories</a></li>' +
+      '<div><strong>Read</strong><ul><li><a href="' + root + 'live.html">The Latest</a></li><li><a href="' + root + 'joy.html">Queer Joy</a></li><li><a href="' + root + 'world.html">Wider world</a></li><li><a href="' + root + 'polls.html">Polls</a></li><li><a href="' + root + 'news.html">Stories</a></li>' +
       '<li><a href="' + root + 'states.html">State tracker</a></li><li><a href="' + root + 'federal.html">Federal tracker</a></li><li><a href="' + root + 'vote.html">Vote 2026</a></li></ul></div>' +
-      '<div><strong>About</strong><ul><li><a href="' + root + 'about.html">Who runs this</a></li><li><a href="' + root + 'about.html#standards">Editorial standards</a></li>' +
+      '<div><strong>About</strong><ul><li><a href="' + root + 'support.html">Support queerham</a></li><li><a href="' + root + 'about.html">Who runs this</a></li><li><a href="' + root + 'about.html#standards">Editorial standards</a></li>' +
       '<li><a href="' + root + 'about.html#corrections">Corrections</a></li><li><a href="https://www.instagram.com/queer.ham/" target="_blank" rel="noopener">Instagram</a></li></ul></div>' +
-      '</div><div class="footer-word" aria-hidden="true">queer<span>ham</span></div></div></div>';
+      '</div><div class="footer-word" aria-hidden="true">queerham</div></div></div>';
   }
 
   /* Posts (original stories) */
@@ -181,6 +196,14 @@
     boxes.forEach(function (b, i) { b.checked = !!st[i]; b.addEventListener("change", function () { st[i] = b.checked; store(key, JSON.stringify(st)); upd(); }); });
     upd();
   });
+
+  /* Support note at the end of every story */
+  var srcBox = document.querySelector(".article .sources") || document.querySelector(".article .wrap > :last-child");
+  if (srcBox && page === "news" && root === "../") {
+    srcBox.insertAdjacentHTML("afterend",
+      '<aside class="support-note"><p><strong>This story is free, and it always will be.</strong> queerham is independent and reader supported. If it helped you, chip in $3 a month so the next one can happen.</p>' +
+      '<a class="btn" href="' + root + 'support.html">Support queerham <span class="arr">&rarr;</span></a></aside>');
+  }
 
   /* Reading progress on articles */
   var art = document.querySelector(".article");
@@ -357,7 +380,7 @@
             (!filt.q || (i.title + " " + i.source).toLowerCase().indexOf(filt.q) > -1);
         });
         if (limit) shown = shown.slice(0, limit);
-        box.innerHTML = shown.length ? shown.map(function (i, n) { return layout === "tiles" ? tileHTML(i) : storyHTML(i, full && n === 0 && !filt.q); }).join("") :
+        box.innerHTML = shown.length ? shown.map(function (i, n) { return layout === "tiles" ? tileHTML(i) : storyHTML(i, (full || box.hasAttribute("data-lead")) && n === 0 && !filt.q); }).join("") :
           '<p class="meta" style="padding:24px 0">' + (st.loading ? "Loading headlines" : "Nothing here right now. Check back soon.") + "</p>";
         if (markNew) box.querySelectorAll(".story").forEach(function (s) { if (!prevLinks[s.getAttribute("data-link")]) s.classList.add("is-new"); });
         prevLinks = {}; st.items.forEach(function (i) { prevLinks[i.link] = 1; });
@@ -378,9 +401,10 @@
     var statusEls = document.querySelectorAll("[data-feed-status]");
     function status(st, extra) {
       var txt = st.loading ? "Checking for new stories" :
-        st.live ? "Live / updated " + (st.updated ? ago(st.updated) : "") :
-        extra && extra.failed ? "Live sources unreachable, showing saved headlines" : "Showing saved headlines";
-      statusEls.forEach(function (el) { el.innerHTML = '<span class="dot"></span>' + txt; });
+        st.live ? "Updated " + (st.updated ? ago(st.updated) : "just now") :
+        extra && extra.failed ? "Sources unreachable, showing saved headlines" : "Showing saved headlines";
+      statusEls.forEach(function (el) { el.textContent = txt; });
+      document.querySelectorAll("[data-feed-updated]").forEach(function (el) { el.textContent = st.live && st.updated ? "Updated " + ago(st.updated) : ""; });
     }
     if (channels.queer) QHFeed.queer.on(function (st, extra) { status(st, extra); if (!st.loading) fillTicker(st.items); });
     Object.keys(channels).forEach(function (ch) { QHFeed[ch].load(); });
@@ -406,7 +430,7 @@
   }
 
   /* Boot */
-  function boot() { initCursor(); magnet(); reveal(); observeCounts(); initFeed(); onScroll(); }
+  function boot() { initCursor(); reveal(); observeCounts(); initFeed(); onScroll(); }
   if (window.QHFeed) boot();
   else {
     var s = document.createElement("script");

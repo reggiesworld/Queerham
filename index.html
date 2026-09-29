@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0c0b0a" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f3eee5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131210" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
 <title>queerham | Queer news and advocacy for the South</title>
-<meta name="description" content="Live headlines and plain-language guides on LGBTQ+ rights in the Southeast and in Washington: what is happening, how it affects you, and how to protect yourself.">
+<meta name="description" content="The latest headlines and plain-language guides on LGBTQ+ rights in the Southeast and in Washington: what is happening, how it affects you, and how to protect yourself.">
 <meta property="og:title" content="queerham">
-<meta property="og:description" content="Queer news, a live headline feed and how-to guides for the South.">
+<meta property="og:description" content="Queer news, a constantly updated headline feed and how-to guides for the South.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body data-page="home" data-root="">
 <div class="preloader" id="preloader" aria-hidden="true">
-  <div class="word"><span>q</span><span style="animation-delay:.04s">u</span><span style="animation-delay:.08s">e</span><span style="animation-delay:.12s">e</span><span style="animation-delay:.16s">r</span><span class="h" style="animation-delay:.2s">h</span><span class="h" style="animation-delay:.24s">a</span><span class="h" style="animation-delay:.28s">m</span></div>
+  <div class="word"><span>q</span><span style="animation-delay:.04s">u</span><span style="animation-delay:.08s">e</span><span style="animation-delay:.12s">e</span><span style="animation-delay:.16s">r</span><span  style="animation-delay:.2s">h</span><span  style="animation-delay:.24s">a</span><span  style="animation-delay:.28s">m</span></div>
   <div class="count">0%</div><div class="bar"></div>
 </div>
 <a class="skip" href="#main">Skip to content</a>
@@ -24,118 +24,58 @@
 <div id="ticker"></div>
 
 <main id="main">
-  <section class="hero">
-    <div class="hero-orb" aria-hidden="true"></div>
-    <div class="wrap hero-grid">
-      <div class="hero-title">
-        <div class="kicker"><span class="dot"></span> Birmingham, Alabama / The South / Washington</div>
-        <h1>
-          <span class="line"><span>Know what's happening.</span></span>
-          <span class="line"><span>Know what it <em class="serif" style="color:var(--accent)">means.</em></span></span>
-        </h1>
-      </div>
-      <div>
-        <p class="lede">queerham tracks the laws, courts and elections shaping queer life in the South, explains them in plain language, and shows you how to protect yourself and the people you love.</p>
-        <div class="btn-row">
-          <a class="btn" href="live.html">Open the live feed <span class="arr">&rarr;</span></a>
-          <a class="btn ghost" href="protect.html">Protect yourself</a>
-        </div>
-      </div>
-      <div class="count-card">
-        <div class="kicker">Election Day / Tue, Nov. 3</div>
-        <div class="countdown"><span data-countdown>35</span> <small>days</small></div>
-        <p class="meta" style="margin:14px 0 12px">Alabama registration closes Mon, Oct. 19. No early voting here.</p>
-        <a class="link-arrow" href="vote.html">Every deadline &rarr;</a>
-      </div>
+  <section class="wrap front">
+    <div class="col">
+      <div class="col-head"><span>The Latest</span><a href="live.html" data-feed-status>Loading</a></div>
+      <div class="feed-list lead-list" data-feed="queer" data-limit="5" data-lead></div>
+      <p style="margin:12px 0 0"><a class="link-arrow" href="live.html">All headlines &rarr;</a></p>
     </div>
-  </section>
-
-  <div class="mega" aria-hidden="true">
-    <div class="mega-track">
-      <span>Know your rights</span><span class="i">and</span><span class="o">use them</span><span>/</span><span>Vote Nov. 3</span><span class="i">y'all</span><span class="o">stay loud</span><span>/</span>
+    <div class="col">
+      <div class="col-head"><span>Alabama polls</span><a href="polls.html">All races &rarr;</a></div>
+      <div data-polls="al-gov,al-sen"></div>
+      <div class="col-head joy" style="margin-top:22px"><span>Queer Joy</span><a href="joy.html">More &rarr;</a></div>
+      <div class="feed-list" data-feed="queer" data-topic="Queer Joy" data-limit="3"></div>
     </div>
-  </div>
-
-  <section class="block">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <div class="kicker" data-feed-status><span class="dot"></span>Loading</div>
-          <h2>Happening <em class="serif">now</em></h2>
-        </div>
-        <a class="link-arrow" href="live.html">Full live feed &rarr;</a>
-      </div>
-      <div class="feed-list" data-feed="queer" data-limit="6"></div>
-    </div>
-  </section>
-
-  <section class="block">
-    <div class="wrap">
-      <div class="section-head">
-        <div><div class="kicker" data-polls-status><span class="dot"></span>Loading the latest polls</div><h2>Alabama <em class="serif">polls</em></h2></div>
-        <a class="link-arrow" href="polls.html">Every Southern race &rarr;</a>
-      </div>
-      <div class="race-grid big" data-polls="al-gov,al-sen" data-big></div>
-    </div>
-  </section>
-
-  <section class="block">
-    <div class="wrap">
-      <div class="section-head">
-        <div><div class="kicker"><span class="dot" style="background:var(--joy)"></span>Wins, firsts and celebration</div><h2>Queer <em class="serif" style="color:var(--joy)">Joy</em></h2></div>
-        <a class="link-arrow" href="joy.html">More joy &rarr;</a>
-      </div>
-      <div class="tiles" data-feed="queer" data-topic="Queer Joy" data-limit="4" data-layout="tiles"></div>
-    </div>
-  </section>
-
-  <section class="block">
-    <div class="wrap">
-      <div class="section-head">
-        <div><div class="kicker">Climate / AI / Health care / Economy / Justice</div><h2>The wider <em class="serif">world</em></h2></div>
-        <a class="link-arrow" href="world.html">All of it &rarr;</a>
-      </div>
-      <div class="filters scroll" id="world-chips" role="group" aria-label="Filter by topic"></div>
-      <div class="tiles" data-feed="world" data-limit="8" data-layout="tiles" data-chips="world-chips"></div>
+    <div class="col">
+      <div class="col-head"><span>Election Day</span><a href="vote.html">Vote guide &rarr;</a></div>
+      <div class="big-num" data-countdown>35</div>
+      <p style="margin:0 0 4px"><strong>days until Nov. 3.</strong> Register in Alabama by Mon, Oct. 19. There is no early voting here.</p>
+      <p class="meta" style="margin:0 0 22px"><a href="https://www.alabamavotes.gov/" target="_blank" rel="noopener">Check your registration</a></p>
+      <div class="col-head world"><span>Wider World</span><a href="world.html">More &rarr;</a></div>
+      <div class="feed-list" data-feed="world" data-limit="4"></div>
     </div>
   </section>
 
   <div class="stats">
     <div class="stat"><div class="v" data-count="election">0</div><div class="k">Days to Election Day</div></div>
     <div class="stat"><div class="v" data-count="9">0</div><div class="k">Southern states watched</div></div>
-    <div class="stat"><div class="v" data-count="18">0</div><div class="k">Races polled live</div></div>
+    <div class="stat"><div class="v" data-count="18">0</div><div class="k">Races polled</div></div>
     <div class="stat"><div class="v" data-count="4">0</div><div class="k">Amendments on AL ballot</div></div>
   </div>
 
   <section class="block">
     <div class="wrap">
-      <div class="section-head">
-        <div><div class="kicker">Original reporting and opinion</div><h2>Stories</h2></div>
-        <a class="link-arrow" href="news.html">All stories &rarr;</a>
-      </div>
+      <div class="section-head"><h2>Stories</h2><a class="link-arrow" href="news.html">All stories &rarr;</a></div>
       <div class="feature" id="featured"></div>
     </div>
   </section>
 
   <section class="block">
     <div class="wrap">
-      <div class="section-head">
-        <div><div class="kicker">Guides and trackers</div><h2>Start <em class="serif">here</em></h2></div>
-        <span class="meta">Swipe &rarr;</span>
-      </div>
+      <div class="section-head"><h2>Guides</h2><span class="meta">Trackers and how-tos</span></div>
       <div class="hscroll">
-        <article class="card guide-card" data-cursor="Open"><div class="idx">01</div><div><h3><a href="states.html">State by state</a></h3><p>What is law now in Alabama and across the South, and what passed or failed in 2026.</p></div></article>
-        <article class="card guide-card" data-cursor="Open"><div class="idx">02</div><div><h3><a href="federal.html">Federal</a></h3><p>Executive orders, agency rules and Supreme Court cases, and where each stands in court.</p></div></article>
-        <article class="card guide-card" data-cursor="Open"><div class="idx">03</div><div><h3><a href="protect.html">Protect yourself</a></h3><p>Checklists for couples, parents, trans folks and everyone: documents, privacy, legal help.</p></div></article>
-        <article class="card guide-card" data-cursor="Open"><div class="idx">04</div><div><h3><a href="vote.html">Vote 2026</a></h3><p>Alabama deadlines, ID rules, what is on the ballot and how to research every race.</p></div></article>
-        <article class="card guide-card" data-cursor="Open"><div class="idx">05</div><div><h3><a href="about.html#standards">Our standards</a></h3><p>How we separate news from opinion, and how we fix mistakes in public.</p></div></article>
+        <article class="card guide-card"><div class="idx">01</div><h3><a href="states.html">State by state</a></h3><p>What is law now in Alabama and across the South, and what passed or failed in 2026.</p></article>
+        <article class="card guide-card"><div class="idx">02</div><h3><a href="federal.html">Federal</a></h3><p>Executive orders, agency rules and Supreme Court cases, and where each stands in court.</p></article>
+        <article class="card guide-card"><div class="idx">03</div><h3><a href="protect.html">Protect yourself</a></h3><p>Checklists for couples, parents, trans folks and everyone: documents, privacy, legal help.</p></article>
+        <article class="card guide-card"><div class="idx">04</div><h3><a href="vote.html">Vote 2026</a></h3><p>Alabama deadlines, ID rules, what is on the ballot and how to research every race.</p></article>
+        <article class="card guide-card"><div class="idx">05</div><h3><a href="about.html#standards">Our standards</a></h3><p>How we separate news from opinion, and how we fix mistakes in public.</p></article>
       </div>
     </div>
   </section>
 
   <section class="block">
     <div class="wrap">
-      <div class="section-head"><div><div class="kicker">Always labeled</div><h2>How to read this site</h2></div></div>
+      <div class="section-head"><h2>How to read this site</h2></div>
       <div class="legend">
         <div><span class="label news">News</span><span>Facts only, linked to the original law, ruling or reporting.</span></div>
         <div><span class="label explainer">Explainer</span><span>What something means for you and what to do next.</span></div>
@@ -143,12 +83,6 @@
       </div>
     </div>
   </section>
-
-  <div class="mega" aria-hidden="true">
-    <div class="mega-track" data-dir="right">
-      <span class="o">Queer</span><span class="i">in the</span><span>South</span><span>/</span><span class="o">Here</span><span class="i">and</span><span>staying</span><span>/</span>
-    </div>
-  </div>
 </main>
 
 <footer id="site-footer"></footer>
