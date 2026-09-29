@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0b0a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f3eee5" media="(prefers-color-scheme: light)">
+<title>Stories | queerham</title>
+<meta name="description" content="Labeled news, explainers and opinion on LGBTQ+ rights in the Southeast and federally.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="news" data-root="">
+<a class="skip" href="#main">Skip to content</a>
+<header id="site-header"></header>
+<div id="ticker"></div>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap">
+      <div class="kicker">Everything published</div>
+      <h1>Stories</h1>
+      <p class="lede">Filter by what kind of post it is, or by where it happens.</p>
+    </div>
+  </section>
+  <section class="block">
+    <div class="wrap">
+      <div class="filters" id="filters" role="group" aria-label="Filter posts">
+        <button class="chip" type="button" data-group="type" data-value="all" aria-pressed="true">All</button>
+        <button class="chip" type="button" data-group="type" data-value="news" aria-pressed="false">News</button>
+        <button class="chip" type="button" data-group="type" data-value="explainer" aria-pressed="false">Explainers</button>
+        <button class="chip" type="button" data-group="type" data-value="take" aria-pressed="false">Perspective</button>
+      </div>
+      <div class="filters" id="filters-scope-wrap">
+        <!-- scope chips share the same handler through the #filters container below -->
+      </div>
+      <div class="grid" id="post-list"></div>
+      <p class="meta" id="empty" style="display:none">Nothing matches that filter yet.</p>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+<script src="assets/posts.js"></script>
+<script>
+  // Build place filter chips from the post list, inside the same #filters group
+  (function () {
+    var f = document.getElementById("filters");
+    var seen = {};
+    (window.QH_POSTS || []).forEach(function (p) { p.scope.forEach(function (s) { seen[s] = 1; }); });
+    var html = '<span style="flex-basis:100%;height:0"></span><button class="chip" type="button" data-group="scope" data-value="all" aria-pressed="true">Everywhere</button>';
+    Object.keys(seen).sort().forEach(function (s) {
+      html += '<button class="chip" type="button" data-group="scope" data-value="' + s + '" aria-pressed="false">' + s + "</button>";
+    });
+    f.insertAdjacentHTML("beforeend", html);
+    document.getElementById("filters-scope-wrap").remove();
+  })();
+</script>
+<script src="assets/site.js"></script>
+</body>
+</html>

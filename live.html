@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0b0a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f3eee5" media="(prefers-color-scheme: light)">
+<title>Live Feed | queerham</title>
+<meta name="description" content="A live, auto-updating feed of news that affects queer people in the South and nationally, filterable by state and topic.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="live" data-root="">
+<a class="skip" href="#main">Skip to content</a>
+<header id="site-header"></header>
+<div id="ticker"></div>
+
+<main id="main">
+  <section class="hero">
+    <div class="hero-orb" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="kicker" data-feed-status><span class="dot"></span>Loading</div>
+      <h1><span class="line"><span>The <em class="serif" style="color:var(--accent)">live</em> feed</span></span></h1>
+      <p class="lede">Every headline we can find about queer life, rights and safety in the South and in Washington, newest first. It updates on its own while you read.</p>
+    </div>
+  </section>
+  <section class="block">
+    <div class="wrap feed-layout">
+      <aside class="feed-side" id="feed-side" aria-label="Filter the feed"></aside>
+      <div class="feed-list" id="feed" data-feed="queer" data-full data-side="feed-side" aria-live="polite"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="site-footer"></footer>
+<script src="assets/posts.js"></script>
+<script src="assets/feed.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>
