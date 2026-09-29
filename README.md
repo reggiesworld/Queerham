@@ -99,7 +99,7 @@ By hand:
 4. Re-upload the folder.
 
 ## After changing a CSS or JS file
-Every page loads the assets with `?v=...` on the end so visitors' browsers fetch the new version. When you change anything in `assets/`, bump that version in every .html file (find and replace `?v=20260929d`), or ask Claude to.
+Every page loads the assets with `?v=...` on the end so visitors' browsers fetch the new version. When you change anything in `assets/`, bump that version in every .html file (find and replace `?v=20260929e`), or ask Claude to.
 
 ## House rules
 

@@ -128,8 +128,8 @@
     footer.innerHTML = band +
       '<section class="help"><div class="wrap">' +
       "<h3>In crisis right now?</h3>" +
-      '<span>Call or text <a href="tel:988">988</a></span>' +
       '<span>Trevor Project <a href="tel:18664887386">1-866-488-7386</a></span>' +
+      '<span>988 Lifeline (general) <a href="tel:988">988</a></span>' +
       '<span>Trans Lifeline <a href="tel:8775658860">877-565-8860</a></span>' +
       '<span>LGBT National Hotline <a href="tel:18888434564">888-843-4564</a></span>' +
       "</div></section>" +
@@ -341,12 +341,14 @@
   }
 
   /* Live feed rendering */
+  // Outlets that openly practice advocacy journalism get a small "Advocacy" mark next to their name.
+  var ADVOCACY = { "Erin in the Morning": 1 };
   function storyHTML(i, lead) {
     var tags = i.regions.concat(i.topics).slice(0, 4).map(function (t) { return '<span class="tag' + (t === "Queer Joy" ? " good" : "") + '">' + esc(t) + "</span>"; }).join("");
-    var fav = i.domain ? '<img src="https://www.google.com/s2/favicons?domain=' + encodeURIComponent(i.domain) + '&sz=64" alt="" loading="lazy" width="16" height="16">' : "";
+    var fav = "";
     return '<a class="story' + (lead ? " lead" : "") + '" href="' + esc(i.link) + '" target="_blank" rel="noopener" data-cursor="Read" data-link="' + esc(i.link) + '">' +
       '<div class="time"><b>' + ago(i.date) + "</b>" + clock(i.date) + "</div>" +
-      "<div><div class=\"src\">" + fav + esc(i.source) + (lead ? " / " + ago(i.date) : "") + "</div><h3>" + esc(i.title) + "</h3><div>" + tags + "</div></div>" +
+      "<div><div class=\"src\">" + fav + esc(i.source) + (ADVOCACY[i.source] ? ' <span class="adv" title="An advocacy outlet. See our sources page.">Advocacy</span>' : "") + (lead ? " / " + ago(i.date) : "") + "</div><h3>" + esc(i.title) + "</h3><div>" + tags + "</div></div>" +
       '<span class="go" aria-hidden="true">&rarr;</span></a>';
   }
   function tileHTML(i) {
