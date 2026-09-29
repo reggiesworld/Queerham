@@ -6,6 +6,7 @@
   type:  "news"      = facts only, linked to original sources
          "take"      = a labeled opinion piece (Perspective)
          "explainer" = what something means and what to do about it
+         "voices"    = Your Voices: a reader's own story, approved by queerham. Add byline: "Jordan, Mobile, AL"
   scope: any of "Alabama", "Georgia", "Florida", "Tennessee", "Mississippi",
          "South Carolina", "North Carolina", "Louisiana", "Kentucky", "Southeast", "Federal", "Election"
 */

@@ -12,5 +12,8 @@ window.QH_SUPPORT = {
   manageLink: "https://billing.stripe.com/p/login/9B63cxdvT7sd9d25TUcMM00",
   // What members see on their bank statement. Set the same text in Stripe (Settings > Business > Public details > Statement descriptor).
   // A neutral name protects readers who aren't out to everyone who sees their statements.
-  descriptor: "QH MEDIA"
+  descriptor: "QH MEDIA",
+  // Formspree form link for "Your Voices" submissions on the Stories page, e.g. "https://formspree.io/f/abcdwxyz"
+  // Until this is filled in, the form says "Submissions open soon" and sends nothing.
+  storyForm: ""
 };

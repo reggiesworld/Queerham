@@ -7,10 +7,23 @@
 <meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
 <title>Stories | queerham</title>
 <meta name="description" content="Labeled news, explainers and opinion on LGBTQ+ rights in the Southeast and federally.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="queerham">
+<meta property="og:title" content="Stories | queerham">
+<meta property="og:description" content="Labeled news, explainers and opinion on LGBTQ+ rights in the Southeast and federally.">
+<meta property="og:url" content="https://reggiesworld.github.io/Queerham/news.html">
+<meta property="og:image" content="https://reggiesworld.github.io/Queerham/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="queerham. The South, read.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Stories | queerham">
+<meta name="twitter:description" content="Labeled news, explainers and opinion on LGBTQ+ rights in the Southeast and federally.">
+<meta name="twitter:image" content="https://reggiesworld.github.io/Queerham/assets/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v=20260929d">
 </head>
 <body data-page="news" data-root="">
 <a class="skip" href="#main">Skip to content</a>
@@ -22,7 +35,7 @@
     <div class="wrap">
       <div class="kicker">Everything published</div>
       <h1>Stories</h1>
-      <p class="lede">Filter by what kind of post it is, or by where it happens.</p>
+      <p class="lede">Our reporting and explainers, plus Your Voices: first-person stories from queer Southerners. <a href="#share">Share yours</a>.</p>
     </div>
   </section>
   <section class="block">
@@ -32,18 +45,49 @@
         <button class="chip" type="button" data-group="type" data-value="news" aria-pressed="false">News</button>
         <button class="chip" type="button" data-group="type" data-value="explainer" aria-pressed="false">Explainers</button>
         <button class="chip" type="button" data-group="type" data-value="take" aria-pressed="false">Perspective</button>
+        <button class="chip" type="button" data-group="type" data-value="voices" aria-pressed="false">Your Voices</button>
       </div>
       <div class="filters" id="filters-scope-wrap">
         <!-- scope chips share the same handler through the #filters container below -->
       </div>
       <div class="grid" id="post-list"></div>
       <p class="meta" id="empty" style="display:none">Nothing matches that filter yet.</p>
+
+      <section class="share" id="share" aria-labelledby="share-h">
+        <div>
+          <div class="kicker">Your Voices</div>
+          <h2 id="share-h">Share your story</h2>
+          <p>What is it like to be queer where you live right now? The wins, the fear, the family dinners, the small-town Pride, the law that changed your plans. We want to hear it in your words.</p>
+          <ul class="rules">
+            <li><strong>You choose your name.</strong> Publish under your first name, initials, a pen name or anonymously. Your email is never published.</li>
+            <li><strong>Nothing goes up automatically.</strong> We read every story, may edit for length and clarity, and email you before anything is published.</li>
+            <li><strong>Your story, your experience.</strong> If you mention a law or a named person, we check the facts first.</li>
+            <li><strong>Be safe.</strong> Leave out details that could identify you, your workplace or your family if that would put you at risk.</li>
+          </ul>
+        </div>
+        <form class="story-form" id="story-form" novalidate>
+          <div class="row">
+            <label class="f">Name to publish<input type="text" name="byline" required maxlength="60" placeholder="Jordan, J.T., or Anonymous"></label>
+            <label class="f">Your email <small>Never published</small><input type="email" name="email" required autocomplete="email"></label>
+          </div>
+          <div class="row">
+            <label class="f">City or town <small>Optional</small><input type="text" name="city" maxlength="60"></label>
+            <label class="f">State<select name="state" required><option value="">Choose</option><option>Alabama</option><option>Georgia</option><option>Florida</option><option>Tennessee</option><option>Mississippi</option><option>South Carolina</option><option>North Carolina</option><option>Louisiana</option><option>Kentucky</option><option>Texas</option><option>Arkansas</option><option>Virginia</option><option>West Virginia</option><option>Oklahoma</option><option>Somewhere else</option></select></label>
+          </div>
+          <label class="f">Headline <small>Optional. We can write one.</small><input type="text" name="headline" maxlength="120"></label>
+          <label class="f">Your story <small id="story-count">0 words</small><textarea name="story" required placeholder="Start anywhere. 300 to 1,200 words is a good length."></textarea></label>
+          <label class="check"><input type="checkbox" name="consent" value="yes" required><span>This is my own story. queerham may edit and publish it under the name above, and I can ask for it to be taken down at any time.</span></label>
+          <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <input type="hidden" name="_subject" value="New Your Voices story">
+          <div class="foot"><button class="btn" type="submit">Send my story</button><span id="story-msg" role="status" aria-live="polite"></span></div>
+        </form>
+      </section>
     </div>
   </section>
 </main>
 
 <footer id="site-footer"></footer>
-<script src="assets/posts.js"></script>
+<script src="assets/posts.js?v=20260929d"></script>
 <script>
   // Build place filter chips from the post list, inside the same #filters group
   (function () {
@@ -58,6 +102,7 @@
     document.getElementById("filters-scope-wrap").remove();
   })();
 </script>
-<script src="assets/site.js"></script>
+<script src="assets/support.js?v=20260929d"></script>
+<script src="assets/site.js?v=20260929d"></script>
 </body>
 </html>

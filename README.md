@@ -71,6 +71,19 @@ Until `paymentLink` is filled in, the Support page shows "Memberships open soon"
 
 Stripe charges 2.9% plus 30 cents per payment, so each $3 membership nets about $2.61.
 
+## Turn on Your Voices submissions
+Readers send stories from the form at the bottom of the Stories page. Submissions come to your email and nothing is published until you add it.
+1. Create a free account at https://formspree.io and click **New form**. Name it `Your Voices` and set the email to where you want stories sent.
+2. Copy the form's link (it looks like `https://formspree.io/f/abcdwxyz`).
+3. Paste it into `storyForm` in `assets/support.js` and upload that file.
+4. Send yourself a test story. The first one asks you to confirm your email.
+
+To publish one: copy `posts/_voices-template.html`, paste in the story, and add it to `assets/posts.js` with `type: "voices"` and `byline: "Jordan, Mobile, AL"`. Or send it to Claude.
+
+## Link previews
+When a page is shared on Instagram, iMessage, Facebook, X or Slack, it shows `assets/og.png` with the page's title and description.
+If you move to queerham.com, find and replace `https://reggiesworld.github.io/Queerham/` with `https://queerham.com/` in every .html file so previews keep working.
+
 ## Credits
 - Logo typeface: Gilbert, honoring Gilbert Baker, licensed CC BY-SA 4.0 (credited at the bottom of the About page, which the license requires).
 
@@ -84,6 +97,9 @@ By hand:
 2. Fill in the title, label (News, Explainer or Perspective), date, text and sources.
 3. Open `assets/posts.js` and add an entry at the top of the list with the same `slug` (file name without `.html`).
 4. Re-upload the folder.
+
+## After changing a CSS or JS file
+Every page loads the assets with `?v=...` on the end so visitors' browsers fetch the new version. When you change anything in `assets/`, bump that version in every .html file (find and replace `?v=20260929d`), or ask Claude to.
 
 ## House rules
 

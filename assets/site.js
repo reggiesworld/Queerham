@@ -67,12 +67,20 @@
     tb.addEventListener("click", toggle);
     nt.addEventListener("click", toggle);
     var mb = document.getElementById("menu-btn"), nav = document.getElementById("nav");
-    mb.addEventListener("click", function () {
-      var open = nav.classList.toggle("open");
+    var dlWrap = document.querySelector(".dateline-wrap");
+    function setMenu(open) {
+      nav.classList.toggle("open", open);
       mb.setAttribute("aria-expanded", open ? "true" : "false");
       mb.textContent = open ? "Close" : "Menu";
-      document.documentElement.style.overflow = open ? "hidden" : "";
-    });
+      // Pin the menu bar to the top of the screen while the menu is open, wherever the page is scrolled,
+      // and hold its place in the page so nothing jumps.
+      if (open) { dlWrap.previousElementSibling.style.marginBottom = dlWrap.offsetHeight + "px"; }
+      else { dlWrap.previousElementSibling.style.marginBottom = ""; }
+      document.documentElement.classList.toggle("menu-open", open);
+    }
+    mb.addEventListener("click", function () { setMenu(!nav.classList.contains("open")); });
+    nav.addEventListener("click", function (e) { if (e.target.closest("a")) setMenu(false); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && nav.classList.contains("open")) setMenu(false); });
     // Show the small logo in the dateline once the big masthead scrolls away
     var dl = document.getElementById("dateline");
     if ("IntersectionObserver" in window) {
@@ -130,20 +138,20 @@
       '<p class="updated">Based in Birmingham, Alabama. Nothing here is legal or medical advice. Headlines in The Latest link to outside outlets that queerham does not control.</p></div>' +
       '<div><strong>Read</strong><ul><li><a href="' + root + 'live.html">The Latest</a></li><li><a href="' + root + 'joy.html">Queer Joy</a></li><li><a href="' + root + 'world.html">Wider world</a></li><li><a href="' + root + 'polls.html">Polls</a></li><li><a href="' + root + 'news.html">Stories</a></li>' +
       '<li><a href="' + root + 'states.html">State tracker</a></li><li><a href="' + root + 'federal.html">Federal tracker</a></li><li><a href="' + root + 'vote.html">Vote 2026</a></li></ul></div>' +
-      '<div><strong>About</strong><ul><li><a href="' + root + 'support.html">Support queerham</a></li><li><a href="' + root + 'about.html">Who runs this</a></li><li><a href="' + root + 'about.html#standards">Editorial standards</a></li>' +
+      '<div><strong>About</strong><ul><li><a href="' + root + 'support.html">Support queerham</a></li><li><a href="' + root + 'about.html">About</a></li><li><a href="' + root + 'news.html#share">Share your story</a></li><li><a href="' + root + 'about.html#standards">Editorial standards</a></li>' +
       '<li><a href="' + root + 'about.html#corrections">Corrections</a></li><li><a href="https://www.instagram.com/queer.ham/" target="_blank" rel="noopener">Instagram</a></li></ul></div>' +
       '</div><div class="footer-word" aria-hidden="true">queerham</div></div></div>';
   }
 
   /* Posts (original stories) */
-  var TYPE_NAMES = { news: "News", take: "Perspective", explainer: "Explainer" };
+  var TYPE_NAMES = { news: "News", take: "Perspective", explainer: "Explainer", voices: "Your Voices" };
   function fmt(d) { return new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
   function card(p, big) {
     return '<article class="card' + (big ? " big" : "") + '" data-type="' + p.type + '" data-scope="' + p.scope.join("|") + '" data-cursor="Read">' +
       '<span class="label ' + p.type + '">' + TYPE_NAMES[p.type] + "</span>" +
       '<h3><a href="' + root + "posts/" + p.slug + '.html">' + p.title + "</a></h3>" +
       "<p>" + p.dek + "</p>" +
-      '<div class="meta">' + fmt(p.date) + " / " + p.scope.join(", ") + "</div></article>";
+      '<div class="meta">' + (p.byline ? "By " + p.byline + " / " : "") + fmt(p.date) + " / " + p.scope.join(", ") + "</div></article>";
   }
   var posts = window.QH_POSTS || [];
   var feat = document.getElementById("featured");
@@ -169,6 +177,36 @@
         c.style.display = ok ? "" : "none"; if (ok) shown++;
       });
       var empty = document.getElementById("empty"); if (empty) empty.style.display = shown ? "none" : "block";
+    });
+  }
+
+  /* Your Voices submission form (Stories page) */
+  var sf = document.getElementById("story-form");
+  if (sf) {
+    var endpoint = (window.QH_SUPPORT || {}).storyForm || "";
+    var msg = document.getElementById("story-msg");
+    if (!endpoint) {
+      sf.classList.add("closed");
+      msg.textContent = "Submissions open soon.";
+      sf.querySelectorAll("input, textarea, select, button").forEach(function (el) { el.disabled = true; });
+    }
+    var body = sf.querySelector("textarea[name=story]"), count = document.getElementById("story-count");
+    if (body && count) body.addEventListener("input", function () { var n = body.value.trim() ? body.value.trim().split(/\s+/).length : 0; count.textContent = n + " words"; });
+    sf.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!endpoint) return;
+      if (sf.querySelector("[name=_gotcha]").value) return;
+      var btn = sf.querySelector("button[type=submit]");
+      btn.disabled = true; msg.textContent = "Sending...";
+      fetch(endpoint, { method: "POST", body: new FormData(sf), headers: { Accept: "application/json" } })
+        .then(function (r) {
+          if (!r.ok) throw new Error(r.status);
+          sf.reset(); if (count) count.textContent = "0 words";
+          sf.classList.add("sent");
+          msg.textContent = "Got it. Thank you for trusting us with your story. If we publish it, we will email you first.";
+        })
+        .catch(function () { msg.textContent = "That did not go through. Please try again in a minute."; })
+        .then(function () { btn.disabled = false; });
     });
   }
 
