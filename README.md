@@ -80,6 +80,12 @@ Readers send stories from the form at the bottom of the Stories page. Submission
 
 To publish one: copy `posts/_voices-template.html`, paste in the story, and add it to `assets/posts.js` with `type: "voices"` and `byline: "Jordan, Mobile, AL"`. Or send it to Claude.
 
+## Search (SEO)
+- `sitemap.xml` lists every page. When you add a post, add a line for it (or ask Claude).
+- Get listed on Google: go to https://search.google.com/search-console, add your site address, verify it (the HTML tag option: paste the tag into index.html), then submit `sitemap.xml` under **Sitemaps**. Do the same at https://www.bing.com/webmasters (it can import from Google).
+- Every page has its own title, description, canonical link and share image. Stories carry NewsArticle data so Google can show them as news.
+- Once you move to queerham.com, add a `robots.txt` at the root with `Sitemap: https://queerham.com/sitemap.xml`, and update the site address everywhere (see Link previews).
+
 ## Link previews
 When a page is shared on Instagram, iMessage, Facebook, X or Slack, it shows `assets/og.png` with the page's title and description.
 If you move to queerham.com, find and replace `https://reggiesworld.github.io/Queerham/` with `https://queerham.com/` in every .html file so previews keep working.
@@ -99,7 +105,7 @@ By hand:
 4. Re-upload the folder.
 
 ## After changing a CSS or JS file
-Every page loads the assets with `?v=...` on the end so visitors' browsers fetch the new version. When you change anything in `assets/`, bump that version in every .html file (find and replace `?v=20260929f`), or ask Claude to.
+Every page loads the assets with `?v=...` on the end so visitors' browsers fetch the new version. When you change anything in `assets/`, bump that version in every .html file (find and replace `?v=20260930a`), or ask Claude to.
 
 ## House rules
 
