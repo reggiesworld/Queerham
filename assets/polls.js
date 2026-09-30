@@ -30,7 +30,7 @@
   var MEDIA = /(fox|cnn|msnbc|\bnbc\b|abc news|\babc\b|\bcbs\b|new york times|\bnyt\b|washington post|wall street journal|\bwsj\b|usa today|reuters|associated press|ap-norc|\bnpr\b|\bpbs\b|politico|the hill|bloomberg|cnbc|newsweek|yahoo|the economist|daily mail|newsnation|nexstar)/i;
   var RATERS = [["Cook", /cook/i], ["Sabato", /sabato/i], ["Inside Elections", /inside elections/i]];
   var ELECTION = new Date("2026-11-03T12:00:00-06:00");
-  var CACHE = "qh-polls-v3", TTL = 20 * 60 * 1000;
+  var CACHE = "qh-polls-v4", TTL = 20 * 60 * 1000, FAIL_TTL = 2 * 60 * 1000;
   var MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -305,8 +305,26 @@
   }
 
   var STORE = {};
-  function readCache() { try { var c = JSON.parse(localStorage.getItem(CACHE) || "null"); return c && Date.now() - c.t < TTL ? c : null; } catch (e) { return null; } }
-  function writeCache() { try { localStorage.setItem(CACHE, JSON.stringify({ t: Date.now(), data: STORE })); } catch (e) {} }
+  // Each race is saved on its own with its own time, so a page that shows only a few races
+  // never stops another page from loading the rest.
+  function readCache() {
+    var out = {};
+    try {
+      var c = JSON.parse(localStorage.getItem(CACHE) || "null") || {};
+      Object.keys(c).forEach(function (id) {
+        var e = c[id], age = Date.now() - e.t;
+        if (e.d ? age < TTL : age < FAIL_TTL) out[id] = e;
+      });
+    } catch (e) {}
+    return out;
+  }
+  function writeCache(id) {
+    try {
+      var c = JSON.parse(localStorage.getItem(CACHE) || "null") || {};
+      c[id] = { t: Date.now(), d: STORE[id] || false };
+      localStorage.setItem(CACHE, JSON.stringify(c));
+    } catch (e) {}
+  }
 
   function render(target, ids, big) {
     var races = RACES.filter(function (r) { return ids.indexOf(r.id) > -1 || (ids[0] === "*south" && r.state !== "Alabama"); });
@@ -328,21 +346,35 @@
       var ids = t.getAttribute("data-polls").split(",");
       RACES.forEach(function (r) { if (ids.indexOf(r.id) > -1 || (ids[0] === "*south" && r.state !== "Alabama")) need[r.id] = r; });
     });
-    function paint() { targets.forEach(function (t) { render(t, t.getAttribute("data-polls").split(","), t.hasAttribute("data-big")); }); }
-    var cached = readCache();
-    if (cached) { STORE = cached.data; paint(); status("Checked " + Math.max(1, Math.round((Date.now() - cached.t) / 60000)) + "m ago"); return; }
-    paint(); status("Loading the latest polls");
-    var list = Object.keys(need).map(function (k) { return need[k]; });
-    var done = 0;
-    Promise.all(list.map(function (r) {
-      return fetchRace(r).then(function (d) { STORE[r.id] = d; }).catch(function () { STORE[r.id] = false; }).then(function () {
-        done++; if (done % 4 === 0) paint();
-      });
-    })).then(function () {
-      paint(); writeCache();
-      var ok = list.filter(function (r) { return STORE[r.id]; }).length;
-      status(ok ? "Checked just now" : "Polls could not load right now");
+    var stateFilter = "All";
+    function applyFilter() { document.querySelectorAll("#polls-south .race").forEach(function (c) { c.style.display = stateFilter === "All" || c.getAttribute("data-state") === stateFilter ? "" : "none"; }); }
+    function paint() { targets.forEach(function (t) { render(t, t.getAttribute("data-polls").split(","), t.hasAttribute("data-big")); }); applyFilter(); }
+    var cached = readCache(), oldest = Date.now(), list = [];
+    Object.keys(need).forEach(function (id) {
+      if (cached[id]) { STORE[id] = cached[id].d; oldest = Math.min(oldest, cached[id].t); }
+      else list.push(need[id]);
     });
+    paint();
+    if (!list.length) { status("Checked " + Math.max(1, Math.round((Date.now() - oldest) / 60000)) + "m ago"); }
+    else {
+      status("Loading the latest polls");
+      // A few at a time, to be polite to Wikipedia and avoid being rate limited.
+      var queue = list.slice(), done = 0, LANES = 4;
+      var finish = function () {
+        paint();
+        var ok = Object.keys(need).filter(function (id) { return STORE[id]; }).length;
+        status(ok ? "Checked just now" : "Polls could not load right now");
+      };
+      var next = function () {
+        var r = queue.shift(); if (!r) return Promise.resolve();
+        return fetchRace(r).then(function (d) { STORE[r.id] = d; }).catch(function () { STORE[r.id] = false; }).then(function () {
+          writeCache(r.id); done++; if (done % 3 === 0) paint();
+          return next();
+        });
+      };
+      var lanes = []; for (var i = 0; i < Math.min(LANES, list.length); i++) lanes.push(next());
+      Promise.all(lanes).then(finish);
+    }
     // State filter on the polls page
     var chips = document.getElementById("poll-states");
     if (chips) {
@@ -351,8 +383,7 @@
       chips.addEventListener("click", function (e) {
         var b = e.target.closest(".chip"); if (!b) return;
         chips.querySelectorAll(".chip").forEach(function (c) { c.setAttribute("aria-pressed", c === b); });
-        var v = b.getAttribute("data-v");
-        document.querySelectorAll("#polls-south .race").forEach(function (c) { c.style.display = v === "All" || c.getAttribute("data-state") === v ? "" : "none"; });
+        stateFilter = b.getAttribute("data-v"); applyFilter();
       });
     }
   }
