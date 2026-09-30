@@ -459,3 +459,30 @@ html.menu-open .dateline-wrap { position: fixed; top: 0; left: 0; right: 0; }
 @media (max-width: 640px) { .src-table, .src-table tbody, .src-table tr, .src-table td { display: block; } .src-table thead { display: none; } .src-table tr { border-bottom: 1px solid var(--rule); padding: 10px 0; } .src-table td, .src-table td:first-child { border: 0; padding: 2px 0; width: auto; } }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Alabama band on the front page */
+.al-band { margin-top: 22px; border-top: 4px solid var(--ink); border-bottom: 3px double var(--rule-strong); padding-top: 14px; padding-bottom: 22px; }
+.al-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 14px; }
+.al-kicker { font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.al-head h2 { margin: 2px 0 0; font: 400 clamp(2rem, 5vw, 3rem)/1 var(--label); letter-spacing: .02em; text-transform: uppercase; }
+.al-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; }
+.al-col { padding: 0 24px; border-right: 1px solid var(--rule); min-width: 0; }
+.al-col:first-child { padding-left: 0; } .al-col:last-child { border-right: 0; padding-right: 0; }
+.al-band .col-head { font: 400 15px var(--label); letter-spacing: .08em; text-transform: uppercase; border-bottom: 1px solid var(--rule-strong); padding-bottom: 6px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: baseline; }
+.al-band .col-head a { font: 600 10px var(--mono); letter-spacing: .1em; text-decoration: none; color: var(--muted); }
+.al-band .story { grid-template-columns: 1fr; gap: 2px; padding: 12px 0; }
+.al-band .story .time { display: none; }
+.al-law, .al-help { list-style: none; margin: 0; padding: 0; }
+.al-law li { padding: 10px 0; border-bottom: 1px solid var(--rule); font-size: .98rem; line-height: 1.45; }
+.al-law li:last-child { border-bottom: 0; }
+.al-count { display: flex; gap: 12px; align-items: center; padding: 8px 0 10px; border-bottom: 1px solid var(--rule); font-size: .95rem; line-height: 1.4; }
+.al-count .big-num { font-size: 3.4rem; line-height: 1; }
+.poll-line { display: grid; grid-template-columns: auto 1fr; gap: 0 10px; padding: 9px 0; border-bottom: 1px solid var(--rule); text-decoration: none; color: var(--ink); }
+.poll-line .pl-office { font: 600 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; grid-row: span 2; align-self: center; min-width: 7.5em; }
+.poll-line .pl-lead { font: 700 1.05rem var(--serif); }
+.poll-line .pl-sub { font: 400 11px var(--mono); color: var(--muted); grid-column: 2; }
+.poll-line:hover .pl-lead { color: var(--accent); }
+.al-help li { padding: 8px 0; border-bottom: 1px solid var(--rule); font-size: .98rem; }
+.al-help li span { display: block; font: 400 11px var(--mono); color: var(--muted); letter-spacing: .04em; }
+@media (max-width: 1000px) { .al-grid { grid-template-columns: 1fr 1fr; } .al-col:first-child { grid-column: 1 / -1; border-right: 0; padding-right: 0; border-bottom: 1px solid var(--rule); padding-bottom: 12px; margin-bottom: 12px; } .al-col:nth-child(2) { padding-left: 0; } }
+@media (max-width: 640px) { .al-grid { grid-template-columns: 1fr; } .al-col:nth-child(3) { order: 2; } .al-col:nth-child(2) { order: 3; } .al-col { padding: 0 !important; border-right: 0; } .al-col + .al-col { border-top: 3px double var(--rule-strong); padding-top: 12px !important; margin-top: 12px; } .al-head { flex-direction: column; align-items: flex-start; gap: 6px; } }

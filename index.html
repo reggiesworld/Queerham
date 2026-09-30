@@ -27,47 +27,65 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=20260930a">
+<link rel="stylesheet" href="assets/style.css?v=20260930b">
 </head>
 <body data-page="home" data-root="">
-<div class="preloader" id="preloader" aria-hidden="true">
-  <div class="word"><span>q</span><span style="animation-delay:.04s">u</span><span style="animation-delay:.08s">e</span><span style="animation-delay:.12s">e</span><span style="animation-delay:.16s">r</span><span  style="animation-delay:.2s">h</span><span  style="animation-delay:.24s">a</span><span  style="animation-delay:.28s">m</span></div>
-  <div class="count">0%</div><div class="bar"></div>
-</div>
 <a class="skip" href="#main">Skip to content</a>
 <header id="site-header"></header>
 <div id="ticker"></div>
 
 <main id="main">
   <h1 class="sr-only">queerham: queer news, politics, polls and how-to guides for Alabama and the South</h1>
+  <section class="wrap al-band" aria-labelledby="al-h">
+    <div class="al-head">
+      <div><div class="al-kicker">Home base</div><h2 id="al-h">Alabama</h2></div>
+      <a class="link-arrow" href="states.html#alabama">Full Alabama tracker &rarr;</a>
+    </div>
+    <div class="al-grid">
+      <div class="al-col">
+        <div class="col-head"><span>Alabama headlines</span><a href="live.html">All &rarr;</a></div>
+        <div class="feed-list" data-feed="queer" data-region="Alabama" data-limit="4" data-empty="No new Alabama headlines in the last few days. The tracker has what is in effect now."></div>
+      </div>
+      <div class="al-col">
+        <div class="col-head"><span>The law right now</span><a href="states.html#alabama">Details &rarr;</a></div>
+        <ul class="al-law">
+          <li><b>Gender-affirming care</b> is a felony for anyone under 19 (SB 184).</li>
+          <li><b>Schools</b> require restrooms by original birth certificate, and bar K-5 lessons on orientation or gender identity (HB 322).</li>
+          <li><b>Sports</b> bar trans girls from girls' K-12 and college teams.</li>
+          <li><b>State law</b> defines sex as sex at birth since Oct. 1, 2025 (SB 79).</li>
+          <li><b>No statewide</b> nondiscrimination law. Birmingham's city ordinance covers sexual orientation and gender identity.</li>
+        </ul>
+      </div>
+      <div class="al-col">
+        <div class="col-head"><span>Nov. 3 election</span><a href="vote.html">Vote guide &rarr;</a></div>
+        <div class="al-count"><span class="big-num" data-countdown>34</span><span><strong>days to go.</strong> Register by <strong>Mon, Oct. 19</strong>. No early voting in Alabama. <a href="https://www.alabamavotes.gov/" target="_blank" rel="noopener">Check your registration</a></span></div>
+        <div class="poll-lines" data-polls="al-gov,al-sen,al-ag" data-compact></div>
+        <p class="meta" style="margin:8px 0 0"><a href="polls.html">All polls</a> / <a href="vote.html">4 amendments on the ballot</a></p>
+        <div class="col-head" style="margin-top:18px"><span>Local help</span></div>
+        <ul class="al-help">
+          <li><a href="https://alabamaequality.org/" target="_blank" rel="noopener">Alabama Equality</a> <span>statewide advocacy</span></li>
+          <li><a href="https://www.magiccityacceptancecenter.org/" target="_blank" rel="noopener">Magic City Acceptance Center</a> <span>youth, Birmingham</span></li>
+          <li><a href="https://www.pflagbirmingham.org/" target="_blank" rel="noopener">PFLAG Birmingham</a> <span>families, 2nd Tuesdays</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <section class="wrap front">
     <div class="col">
       <div class="col-head"><span>The Latest</span><a href="live.html" data-feed-status>Loading</a></div>
-      <div class="feed-list lead-list" data-feed="queer" data-limit="5" data-lead></div>
+      <div class="feed-list lead-list" data-feed="queer" data-limit="5" data-lead data-lead-south data-skip-region="Alabama"></div>
       <p style="margin:12px 0 0"><a class="link-arrow" href="live.html">All headlines &rarr;</a></p>
     </div>
     <div class="col">
-      <div class="col-head"><span>Alabama polls</span><a href="polls.html">All races &rarr;</a></div>
-      <div data-polls="al-gov,al-sen"></div>
-      <div class="col-head joy" style="margin-top:22px"><span>Queer Joy</span><a href="joy.html">More &rarr;</a></div>
-      <div class="feed-list" data-feed="queer" data-topic="Queer Joy" data-limit="3"></div>
+      <div class="col-head joy"><span>Queer Joy</span><a href="joy.html">More &rarr;</a></div>
+      <div class="feed-list" data-feed="queer" data-topic="Queer Joy" data-limit="4"></div>
     </div>
     <div class="col">
-      <div class="col-head"><span>Election Day</span><a href="vote.html">Vote guide &rarr;</a></div>
-      <div class="big-num" data-countdown>35</div>
-      <p style="margin:0 0 4px"><strong>days until Nov. 3.</strong> Register in Alabama by Mon, Oct. 19. There is no early voting here.</p>
-      <p class="meta" style="margin:0 0 22px"><a href="https://www.alabamavotes.gov/" target="_blank" rel="noopener">Check your registration</a></p>
       <div class="col-head world"><span>Wider World</span><a href="world.html">More &rarr;</a></div>
       <div class="feed-list" data-feed="world" data-limit="4"></div>
     </div>
   </section>
-
-  <div class="stats">
-    <div class="stat"><div class="v" data-count="election">0</div><div class="k">Days to Election Day</div></div>
-    <div class="stat"><div class="v" data-count="9">0</div><div class="k">Southern states watched</div></div>
-    <div class="stat"><div class="v" data-count="18">0</div><div class="k">Races polled</div></div>
-    <div class="stat"><div class="v" data-count="4">0</div><div class="k">Amendments on AL ballot</div></div>
-  </div>
 
   <section class="block">
     <div class="wrap">
@@ -89,22 +107,12 @@
     </div>
   </section>
 
-  <section class="block">
-    <div class="wrap">
-      <div class="section-head"><h2>How to read this site</h2></div>
-      <div class="legend">
-        <div><span class="label news">News</span><span>Facts only, linked to the original law, ruling or reporting.</span></div>
-        <div><span class="label explainer">Explainer</span><span>What something means for you and what to do next.</span></div>
-        <div><span class="label take">Perspective</span><span>A clearly labeled opinion piece, from us or a guest writer.</span></div>
-      </div>
-    </div>
-  </section>
 </main>
 
 <footer id="site-footer"></footer>
-<script src="assets/posts.js?v=20260930a"></script>
-<script src="assets/feed.js?v=20260930a"></script>
-<script src="assets/polls.js?v=20260930a"></script>
-<script src="assets/site.js?v=20260930a"></script>
+<script src="assets/posts.js?v=20260930b"></script>
+<script src="assets/feed.js?v=20260930b"></script>
+<script src="assets/polls.js?v=20260930b"></script>
+<script src="assets/site.js?v=20260930b"></script>
 </body>
 </html>

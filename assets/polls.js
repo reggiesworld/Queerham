@@ -239,6 +239,21 @@
       series.map(function (s) { return s.el; }).join("") + '<line class="xh" x1="0" x2="0" y1="' + T + '" y2="' + (H - B) + '"/>' + hits + '</svg><div class="tip" role="status"></div></div>';
   }
 
+  // One line per race for the home page: office, leader and margin, top rating.
+  function line(race, data) {
+    var avg = data && average(data.polls, race.c.length), right;
+    if (!data) right = '<span class="pl-sub">Loading</span>';
+    else if (!avg) right = '<span class="pl-sub">No qualifying polls yet</span>';
+    else {
+      var order = race.c.map(function (c, i) { return i; }).filter(function (i) { return avg.vals[i] !== null; }).sort(function (a, b) { return avg.vals[b] - avg.vals[a]; });
+      var lead = order[0], second = order[1];
+      var margin = second !== undefined ? Math.round((avg.vals[lead] - avg.vals[second]) * 10) / 10 : 0;
+      right = '<span class="pl-lead">' + esc(race.c[lead][0]) + ' <b style="color:' + color(race.c[lead][2]) + '">' + (margin > 0 ? "+" + margin : "Tied") + "</b></span>";
+    }
+    var rating = data && data.ratings && data.ratings[0] ? '<span class="pl-sub">' + esc(data.ratings[0][0]) + ": " + esc(data.ratings[0][1]) + "</span>" : "";
+    return '<a class="poll-line" href="polls.html#polls-alabama"><span class="pl-office">' + esc(race.office) + "</span>" + right + rating + "</a>";
+  }
+
   function card(race, data, big) {
     var polls = data.polls, avg = average(polls, race.c.length);
     var ratings = data.ratings.map(function (r) { return '<span class="tag">' + esc(r[0]) + ": " + esc(r[1]) + "</span>"; }).join("");
@@ -326,8 +341,9 @@
     } catch (e) {}
   }
 
-  function render(target, ids, big) {
+  function render(target, ids, big, compact) {
     var races = RACES.filter(function (r) { return ids.indexOf(r.id) > -1 || (ids[0] === "*south" && r.state !== "Alabama"); });
+    if (compact) { target.innerHTML = races.map(function (r) { return line(r, STORE[r.id]); }).join(""); return; }
     target.innerHTML = races.map(function (r) {
       return STORE[r.id] ? card(r, STORE[r.id], big) : STORE[r.id] === false ?
         '<article class="card race" data-state="' + esc(r.state) + '"><div class="kicker">' + esc(r.state) + " / " + esc(r.office) + '</div><p class="meta">Could not load polls right now. <a href="https://en.wikipedia.org/wiki/' + r.page + '" target="_blank" rel="noopener">See the source table</a>.</p></article>' :
@@ -348,7 +364,7 @@
     });
     var stateFilter = "All";
     function applyFilter() { document.querySelectorAll("#polls-south .race").forEach(function (c) { c.style.display = stateFilter === "All" || c.getAttribute("data-state") === stateFilter ? "" : "none"; }); }
-    function paint() { targets.forEach(function (t) { render(t, t.getAttribute("data-polls").split(","), t.hasAttribute("data-big")); }); applyFilter(); }
+    function paint() { targets.forEach(function (t) { render(t, t.getAttribute("data-polls").split(","), t.hasAttribute("data-big"), t.hasAttribute("data-compact")); }); applyFilter(); }
     var cached = readCache(), oldest = Date.now(), list = [];
     Object.keys(need).forEach(function (id) {
       if (cached[id]) { STORE[id] = cached[id].d; oldest = Math.min(oldest, cached[id].t); }

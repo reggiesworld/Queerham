@@ -368,7 +368,7 @@
     boxes.forEach(function (box) {
       var ch = box.getAttribute("data-feed"), full = box.hasAttribute("data-full"), layout = box.getAttribute("data-layout") || "list";
       var limit = parseInt(box.getAttribute("data-limit") || "0", 10);
-      var filt = { region: "All", topic: box.getAttribute("data-topic") || "All", q: "" };
+      var filt = { region: box.getAttribute("data-region") || "All", topic: box.getAttribute("data-topic") || "All", q: "" };
       var chipsEl = box.getAttribute("data-chips") ? document.getElementById(box.getAttribute("data-chips")) : null;
       var prevLinks = {}, first = true;
       var topicList = ch === "world" ? QHFeed.worldTopics : QHFeed.topics;
@@ -415,12 +415,23 @@
         if (chipsEl) chipsEl.innerHTML = chips("topic", topicList, st.items, "topics");
         var shown = st.items.filter(function (i) {
           return (filt.region === "All" || i.regions.indexOf(filt.region) > -1) &&
+            (!box.getAttribute("data-skip-region") || i.regions.indexOf(box.getAttribute("data-skip-region")) < 0) &&
             (filt.topic === "All" || i.topics.indexOf(filt.topic) > -1) &&
             (!filt.q || (i.title + " " + i.source).toLowerCase().indexOf(filt.q) > -1);
         });
+        // Front page: lead with the newest Southern story from the last day when there is one.
+        if (box.hasAttribute("data-lead-south") && shown.length) {
+          var dayAgo = Date.now() - 864e5, k = -1;
+          for (var n2 = 0; n2 < shown.length; n2++) {
+            var it = shown[n2];
+            if (new Date(it.date).getTime() < dayAgo) break;
+            if (it.regions.some(function (r) { return r !== "Federal"; })) { k = n2; break; }
+          }
+          if (k > 0) shown = [shown[k]].concat(shown.slice(0, k), shown.slice(k + 1));
+        }
         if (limit) shown = shown.slice(0, limit);
         box.innerHTML = shown.length ? shown.map(function (i, n) { return layout === "tiles" ? tileHTML(i) : storyHTML(i, (full || box.hasAttribute("data-lead")) && n === 0 && !filt.q); }).join("") :
-          '<p class="meta" style="padding:24px 0">' + (st.loading ? "Loading headlines" : "Nothing here right now. Check back soon.") + "</p>";
+          '<p class="meta" style="padding:24px 0">' + (st.loading ? "Loading headlines" : (box.getAttribute("data-empty") || "Nothing here right now. Check back soon.")) + "</p>";
         if (markNew) box.querySelectorAll(".story").forEach(function (s) { if (!prevLinks[s.getAttribute("data-link")]) s.classList.add("is-new"); });
         prevLinks = {}; st.items.forEach(function (i) { prevLinks[i.link] = 1; });
         reveal(box);
